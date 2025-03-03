@@ -17,10 +17,8 @@ export const assets = {
     admin_logo,
     appointment_icon,
     cancel_icon,
-   
-    upload_area,
+ upload_area,
     home_icon,
- 
    
     list_icon,
     tick_icon,

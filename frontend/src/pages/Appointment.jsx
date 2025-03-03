@@ -33,7 +33,7 @@ const Appointment = () => {
     for (let i = 0; i < 7; i++) {
 
       // getting date with index to generate time slots for 7 consecutive days.
-      let currentDate = new Date(today)
+      let currentDate = new Date(today) 
       currentDate.setDate(today.getDate() + i)
 
       // setting end time of the date with index
