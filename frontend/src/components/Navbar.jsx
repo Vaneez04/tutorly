@@ -33,7 +33,7 @@ const logout=()=>{
             <li className='py-1' >Contact</li>
               <hr className='border-none outline-none h-0.5 bg-primary w-3/5 m-auto hidden' />
         </NavLink>
-        <a target='_blank' href="https://www.espncricinfo.com/" className='border px-5 text-xs py-1.5 rounded-full'>Admin Panel</a>
+        <a target='_blank' href="https://tutorly-admin.onrender.com/" className='border px-5 text-xs py-1.5 rounded-full'>Admin Panel</a>
       </ul>
 
       {/* yaha ham token ko state ki tarah use kar rhe agar login hai user to pic aur dropdown dikhao warna (agar token false ho) to create account show karo */}
