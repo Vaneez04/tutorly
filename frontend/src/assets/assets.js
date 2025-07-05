@@ -48,11 +48,6 @@ export const assets = {
     contact_image,
     about_image,
     menu_icon,
-<<<<<<< HEAD
-
-=======
-  
->>>>>>> 058a5a6 (Updated frontend and backend configurations)
     dropdown_icon,
     upload_icon,
     stripe_logo,
