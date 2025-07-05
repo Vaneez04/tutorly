@@ -11,6 +11,8 @@ const Myappointments = () => {
   const { backendUrl, token } = useContext(AppContext)
   const navigate = useNavigate()
   const [myappointments, setMyAppointments] = useState([])
+  const [showCallId, setShowCallId] = useState(null)
+
   const [activeCallAppointmentId, setActiveCallAppointmentId] = useState(null) // ✅ manages which call to show
 
   const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
@@ -176,22 +178,24 @@ const Myappointments = () => {
         )}
 
         {/* Start Call */}
-        {!item.cancelled && item.payment && !item.isCompleted && (
-          <button
-            className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 w-full sm:w-auto"
-            onClick={() => setActiveCallAppointmentId(item._id)}
-          >
-            Start Call
-          </button>
-        )}
+    {item.payment && !item.isCompleted && !item.cancelled && (
+  <button
+    className="mt-2 bg-purple-600 text-white px-4 py-2 rounded"
+    onClick={() => setShowCallId(item._id)}
+  >
+    Start Call
+  </button>
+)}
 
-        {/* Video Call */}
-        {activeCallAppointmentId === item._id && (
-          <VideoCall
-            roomId={item._id}
-            onClose={() => setActiveCallAppointmentId(null)}
-          />
-        )}
+{showCallId === item._id && (
+  <VideoCall
+    roomId={item._id}
+    onClose={() => setShowCallId(null)}
+    isInitiator={true} // ✅ User starts the call
+  />
+)}
+
+
       </div>
     ))}
   </div>

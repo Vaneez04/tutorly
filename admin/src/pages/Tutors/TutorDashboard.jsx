@@ -9,7 +9,8 @@ const TutorDashboard = () => {
   const { tToken, dashData, getDashData, cancelAppointment, completeAppointment } = useContext(TutorContext)
   const { slotDateFormat, currencySymbol } = useContext(AppContext)
 
-  const [showCallFor, setShowCallFor] = useState(null) //  Track which appointment is showing video call
+  // const [showCallFor, setShowCallFor] = useState(null) //  Track which appointment is showing video call
+const [showCallId, setShowCallId] = useState(null)
 
   useEffect(() => {
     if (tToken) {
@@ -84,20 +85,24 @@ const TutorDashboard = () => {
                   />
 
                   {/*  Video Call button */}
-                  <button
-                    className="mt-2 bg-purple-600 text-white px-4 py-2 rounded"
-                    onClick={() => setShowCallFor(item._id)}
-                  >
-                    Join Call
-                  </button>
+            {item.payment && !item.isCompleted && !item.cancelled && (
+  <button
+    className="mt-2 bg-green-600 text-white px-4 py-2 rounded"
+    onClick={() => setShowCallId(item._id)}
+  >
+    Join Call
+  </button>
+)}
 
-                  {/*  Conditionally render VideoCall */}
-                  {showCallFor === item._id && (
-                    <VideoCall
-                      roomId={item._id}
-                      onClose={() => setShowCallFor(null)}
-                    />
-                  )}
+{showCallId === item._id && (
+  <VideoCall
+    roomId={item._id}
+    onClose={() => setShowCallId(null)}
+    isInitiator={false} // ✅ Tutor only joins
+  />
+)}
+
+
                 </>
               )}
             </div>
