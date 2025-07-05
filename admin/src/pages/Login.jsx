@@ -28,16 +28,18 @@ const Login = () => {
           }
     
         }
-        else{
-          const { data } = await axios.post(backendUrl + '/api/tutor/login', { email, password })
-          if (data.success) {
-            setTToken(data.token)
-            localStorage.setItem('tToken', data.token)
-          } else {
-            toast.error(data.message)
-          }
+       else {
+  const { data } = await axios.post(backendUrl + '/api/tutor/login', { email, password })
+  if (data.success) {
+    setTToken(data.token)
+    localStorage.setItem('tToken', data.token)
+
     
-        }
+  } else {
+    toast.error(data.message)
+  }
+}
+
     }
 
     return (

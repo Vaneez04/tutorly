@@ -139,11 +139,11 @@ const Appointment = () => {
     }
   }, [tutInfo])
   return tutInfo ? (
-    <div className="p-6 space-y-8">
+    <div className="px-4 sm:px-6 md:px-10 lg:px-16 py-6 space-y-10">
       {/* Tutor Details */}
-      <div className="flex flex-col sm:flex-row gap-6">
+      <div className="flex flex-col sm:flex-row gap-6 sm:items-start">
         {/* Tutor Image */}
-        <div className="sm:w-1/3">
+        <div className="sm:w-1/3 w-full max-w-xs mx-auto sm:mx-0">
           <img
             className="bg-blue-400 w-full sm:max-w-72 rounded-lg"
             src={tutInfo.image}
@@ -152,9 +152,9 @@ const Appointment = () => {
         </div>
 
         {/* Tutor Details - Single Box */}
-        <div className="flex-1 border border-[#ADADAD] rounded-lg p-8 bg-white relative shadow-lg">
+        <div className="flex-1 border border-[#ADADAD] rounded-lg p-6 sm:p-8 bg-white relative shadow-md">
           {/* Tutor Name and Verification */}
-          <p className="flex items-center gap-2 text-3xl font-medium text-gray-700">
+          <p className="text-gray-600 font-medium mt-4 sm:mt-0 sm:absolute sm:bottom-4 sm:left-4">
             {tutInfo.name}{" "}
             <img className="w-5" src={assets.verified_icon} alt="Verified Icon" />
           </p>
@@ -191,11 +191,12 @@ const Appointment = () => {
       </div>
 
       {/* Slots Booking Section */}
-      <div className="border border-gray-300 rounded-lg p-6 bg-white shadow-lg text-center">
+      <div className="border border-gray-300 rounded-lg p-4 sm:p-6 bg-white shadow text-center">
         <p className="text-xl font-medium text-gray-700 mb-6">Slots Booking</p>
 
         {/* Days and Dates */}
-        <div className="flex items-center justify-center gap-4 overflow-x-auto py-4">
+      <div className="flex items-center justify-start sm:justify-center gap-3 overflow-x-auto py-3 px-1">
+
           {tutSlots.length > 0 &&
             tutSlots.map((item, index) => (
               <div
@@ -217,7 +218,8 @@ const Appointment = () => {
         </div>
 
         {/* Time Slots */}
-        <div className="flex items-center justify-center gap-4 overflow-x-auto mt-6">
+        <div className="flex items-center justify-start sm:justify-center gap-3 overflow-x-auto mt-5 px-1">
+
           {tutSlots.length > 0 &&
             tutSlots[slotIndex].map((item, index) => (
               <p
@@ -234,7 +236,7 @@ const Appointment = () => {
         </div>
 
         {/* Button */}
-        <button onClick={bookAppointment} className="bg-blue-400 text-black text-sm font-medium px-8 py-3 rounded-lg mt-6 hover:bg-blue-400-dark transition-all duration-300">
+        <button onClick={bookAppointment} className="w-full sm:w-auto bg-blue-400 text-black text-sm font-semibold px-6 py-3 rounded-lg mt-6 hover:bg-blue-500 transition duration-300">
           Book an Appointment
         </button>
       </div>

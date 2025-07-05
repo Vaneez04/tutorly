@@ -1,64 +1,53 @@
 import React from 'react'
 import { assets } from '../assets/assets'
+
 const About = () => {
   return (
-    <div className="px-6 md:px-16 lg:px-24 py-10">
+    <div className="px-4 sm:px-6 md:px-16 lg:px-24 py-10">
       {/* About Us */}
-      <div className="text-center text-2xl font-semibold text-[#707070] mb-10">
+      <div className="text-center text-2xl sm:text-3xl font-semibold text-[#707070] mb-8 sm:mb-10">
         <p>ABOUT US</p>
       </div>
-  
-      <div className="my-10 flex flex-col md:flex-row gap-12">
-        <img className="w-full md:max-w-[360px] rounded-lg shadow-md" src={assets.about_image} alt="" />
-        <div className="flex flex-col justify-center gap-6 md:w-2/4 text-sm text-gray-600 leading-relaxed">
+
+      <div className="flex flex-col md:flex-row gap-8 sm:gap-10 lg:gap-12 items-center my-8">
+        <img
+          className="w-full sm:max-w-[400px] rounded-lg shadow-md"
+          src={assets.about_image}
+          alt="About Tutorly"
+        />
+        <div className="flex flex-col justify-center gap-4 sm:gap-6 text-sm sm:text-base text-gray-700 leading-relaxed">
           <p>
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vero
-            reprehenderit, ut vitae laudantium quos eligendi possimus non qui
-            molestias nostrum necessitatibus accusantium molestiae, iure dolores
-            sit aliquam tempora fuga, dignissimos facere. Ullam, sint error.
+            Our platform offers a seamless tutor appointment booking system designed specifically for students to resolve academic doubts efficiently. Students can explore tutor profiles based on specialization and schedule appointments in available time slots.
           </p>
           <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem, modi,
-            doloremque ipsam quaerat alias culpa, dolorem fugiat non ex in
-            deserunt aperiam! Ut!
+            We've implemented secure features like secure authentication and Razorpay-powered online payments. Users can update their profiles, upload images , and manage their appointments effectively — including cancellation and tracking.
           </p>
-          <b className="text-gray-800 text-lg">Our Vision</b>
+          <b className="text-gray-800 text-base sm:text-lg mt-2">Our Vision</b>
           <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Porro ipsum
-            blanditiis ducimus reprehenderit suscipit optio, exercitationem illo
-            odit! Esse suscipit repellendus enim a sed rem quae, voluptates
-            similique cumque, sint dignissimos. Minus aspernatur veniam dolorum
-            dicta quidem sapiente facilis eum rerum odio fugiat.
+            To bridge the gap between learners and subject experts by offering an interactive, efficient, and secure platform. From personalized appointments to real-time communication via chat and video calls, we aim to enhance academic support accessibility.
           </p>
         </div>
       </div>
-  
+
       {/* Why Choose Us */}
-      <div className="text-center text-xl font-medium text-gray-700 mb-8">
+      <div className="text-center text-xl sm:text-2xl font-medium text-gray-700 mb-6 sm:mb-8">
         <p>WHY CHOOSE US</p>
       </div>
-  
+
       <div className="flex flex-col md:flex-row gap-6">
-        <div className="flex-1 p-6 border rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out hover:bg-gray-50">
+        <div className="flex-1 p-5 sm:p-6 border rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out hover:bg-gray-50">
           <p>
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Hic,
-            delectus repellendus aut autem doloremque saepe iste porro sequi ipsa
-            sapiente minus voluptatem perspiciatis ratione at quidem eius
-            accusantium necessitatibus aspernatur.
+             One-tap appointment booking with your preferred tutor. We ensure no double-booking in the same time slot. Tutors and students both have access to dynamic dashboards for tracking progress and sessions.
           </p>
         </div>
-        <div className="flex-1 p-6 border rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out hover:bg-gray-50">
+        <div className="flex-1 p-5 sm:p-6 border rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out hover:bg-gray-50">
           <p>
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Hic,
-            delectus repellendus aut autem doloremque saepe iste porro sequi ipsa
-            sapiente minus voluptatem perspiciatis ratione at quidem eius
-            accusantium necessitatibus aspernatur.
+            Secure login/signup , file upload support  live chat and video calling features to connect tutors and students in real-time. 
           </p>
         </div>
       </div>
     </div>
-  );
-  
+  )
 }
 
 export default About

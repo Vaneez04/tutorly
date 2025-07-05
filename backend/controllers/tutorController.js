@@ -51,9 +51,14 @@ const loginTutor = async (req, res) => {
         const isMatch = await bcrypt.compare(password, tutor.password)
 
         if (isMatch) {
-            const token = jwt.sign({ id: tutor._id }, process.env.JWT_SECRET)
-            res.json({ success: true, token })
-        } else {
+  const token = jwt.sign({ id: tutor._id }, process.env.JWT_SECRET)
+  res.json({ 
+    success: true, 
+    token, 
+    
+  })
+}
+        else {
             res.json({ success: false, message: "Invalid credentials" })
         }
 

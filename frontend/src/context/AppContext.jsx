@@ -9,7 +9,7 @@ const AppContextProvider=(props)=>{
     // const value={tutors,currencySymbol}   pehle assets se tutors data la rhe the
     const currencySymbol = '₹'
     const backendUrl = import.meta.env.VITE_BACKEND_URL
-    
+        // const backendUrl = 'http://localhost:4000'
     const [tutors, setTutors] = useState([])
     const [token, setToken] = useState(localStorage.getItem('token') ? localStorage.getItem('token') : '')   // userlogin token
     const [userData, setUserData] = useState(false)  // user ki profile ko get/update ke liye hai
