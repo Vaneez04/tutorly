@@ -8,7 +8,7 @@ import tutorRouter from "./routes/tutorRoute.js"
 import userRouter from "./routes/userRoute.js"
 import http from "http"
 import { Server } from "socket.io"
-import MessageModel from "./models/messagemodel.js"
+import MessageModel from "./models/messageModel.js"
 
 import chatRouter from "./routes/chatRoute.js"
 
