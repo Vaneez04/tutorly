@@ -10,6 +10,7 @@ import About from './pages/About'
 import Appointment from './pages/Appointment'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
+import ChatPage from './pages/ChatPage'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 const App = () => {
@@ -30,6 +31,7 @@ const App = () => {
         {/* user book karega is path se */}
         <Route path='/appointment' element={<Appointment/>}/>
         <Route path='/appointment/:tutid' element={<Appointment />} />
+        <Route path='/chat/:appointmentId' element={<ChatPage />} />
       </Routes>
       <Footer/>
     </div>

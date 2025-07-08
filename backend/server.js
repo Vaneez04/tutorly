@@ -52,24 +52,35 @@ io.on('connection', (socket) => {
   })
 
   // Handle incoming messages
- socket.on('sendMessage', async ({ roomId, message, senderId }) => {
+socket.on('sendMessage', async ({ roomId, message, senderId, image }) => {
   try {
     const savedMsg = await MessageModel.create({
       appointmentId: roomId,
       senderId,
-      message,
+      message: message || "",   // default to empty string if not provided
+      image: image || "",       // ✅ handle optional image
       timestamp: new Date()
     })
-      // Broadcast to the same room
-        io.to(roomId).emit('receiveMessage', {
-      message: savedMsg.message,
-      senderId: savedMsg.senderId,
-      timestamp: savedMsg.timestamp
-    })
+
+    // Broadcast the full saved message
+    console.log("sending msg to client:", {
+  message: savedMsg.message,
+  image: savedMsg.image,
+  senderId: savedMsg.senderId
+})
+    io.to(roomId).emit('receiveMessage', {
+  _id: savedMsg._id,
+  message: savedMsg.message,
+  image: savedMsg.image,
+  senderId: savedMsg.senderId,
+  appointmentId: savedMsg.appointmentId,
+  timestamp: savedMsg.timestamp
+})
   } catch (err) {
     console.error("Error saving message:", err.message)
   }
 })
+
 
  //  WebRTC: Video Call Signaling
   socket.on('joinCallRoom', (roomId) => {

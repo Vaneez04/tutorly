@@ -26,5 +26,22 @@ const saveChatMessage = async (req, res) => {
   res.status(500).json({ success: false, message: error.message });
 }
 }
+// Upload chat image to Cloudinary
+const uploadChatImage = async (req, res) => {
+  try {
+    console.log(" File received:", JSON.stringify(req.file, null, 2))  //  Clear log
+
+    if (!req.file || !req.file.path) {
+      return res.status(400).json({ success: false, message: 'No file uploaded' })
+    }
+
+    res.json({ success: true, url: req.file.path })
+  } catch (error) {
+    console.error("🔥 Upload Error:", error)
+    res.status(500).json({ success: false, message: error.message })
+  }
+}
+
+
         
-export { chatmessages ,saveChatMessage};
+export { chatmessages ,saveChatMessage,uploadChatImage};

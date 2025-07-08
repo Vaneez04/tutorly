@@ -168,12 +168,20 @@ const Myappointments = () => {
         {/* ChatRoom */}
         {!item.cancelled && item.payment && !item.isCompleted && (
           <div>
-            <ChatRoom
+            {/* <ChatRoom
               roomId={item._id}
               senderId={item.userId}
               senderRole="User"
               collapsible={true}
-            />
+            /> */}
+            <button
+  onClick={() =>
+    navigate(`/chat/${item._id}?senderId=${item.userId}&senderRole=User`)
+  }
+  className="px-4 py-2 bg-blue-600 text-white rounded"
+>
+  ASK IN CHAT
+</button>
           </div>
         )}
 

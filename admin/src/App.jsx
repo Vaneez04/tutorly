@@ -14,7 +14,7 @@ import TutorsList from './pages/Admin/TutorsList';
 import TutorDashboard from './pages/Tutors/TutorDashboard';
 import TutorAppointments from './pages/Tutors/TutorAppointments';
 import TutorProfile from './pages/Tutors/TutorProfile';
-
+import ChatPage from './pages/Tutors/ChatPage';
 const App = () => {
   const { aToken } = useContext(AdminContext)
   const { tToken } = useContext(TutorContext)
@@ -34,6 +34,7 @@ const App = () => {
           <Route path='/tutor-dashboard' element={<TutorDashboard />} />
           <Route path='/tutor-appointments' element={<TutorAppointments />} />
           <Route path='/tutor-profile' element={<TutorProfile />} />
+          <Route path='/chat/:appointmentId' element={<ChatPage />} />
         </Routes>
 
       </div>

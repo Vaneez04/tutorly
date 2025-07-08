@@ -4,8 +4,9 @@ import { assets } from '../../assets/assets'
 import { AppContext } from '../../context/AppContext'
 import ChatRoom from '../../components/ChatRoom'
 import VideoCall from '../../components/VideoCall' //  Import VideoCall
-
+import { useNavigate } from 'react-router-dom'
 const TutorDashboard = () => {
+   const navigate = useNavigate()
   const { tToken, dashData, getDashData, cancelAppointment, completeAppointment } = useContext(TutorContext)
   const { slotDateFormat, currencySymbol } = useContext(AppContext)
 
@@ -53,7 +54,7 @@ const [showCallId, setShowCallId] = useState(null)
         </div>
 
         <div className='pt-4 border border-t-0'>
-          {dashData.latestAppointments.slice(0, 5).map((item, index) => (
+          {dashData.latestAppointments.slice(0, 10).map((item, index) => (
             <div className='flex flex-col px-6 py-3 gap-3 hover:bg-gray-100' key={index}>
               <div className="flex items-center">
                 <img className='rounded-full w-10' src={item.userData.image} alt="" />
@@ -77,12 +78,15 @@ const [showCallId, setShowCallId] = useState(null)
               {/* ChatRoom rendered only for active & paid appointments */}
               {!item.cancelled && item.payment && !item.isCompleted && (
                 <>
-                  <ChatRoom
-                    roomId={item._id}
-                    senderId={item.tutid}
-                    senderRole="Tutor"
-                    collapsible={true}
-                  />
+                  
+                  <button
+  onClick={() =>
+    navigate(`/chat/${item._id}?senderId=${item.tutid}&senderRole=Tutor`)
+  }
+  className="px-4 py-2 bg-blue-600 text-white rounded"
+>
+ RESPOND IN CHAT
+</button>
 
                   {/*  Video Call button */}
             {item.payment && !item.isCompleted && !item.cancelled && (
