@@ -35,14 +35,23 @@ app.get('/', (req, res) => {
 // Setup HTTP Server + Socket.IO
 const server = http.createServer(app)
 //This is needed because Socket.IO needs access to the raw HTTP server to upgrade HTTP to WebSocket under the hood.
+const allowedOrigins = process.env.FRONTEND_URLS?.split(',') || ["*"];
+
 const io = new Server(server, {
   cors: {
-    origin: process.env.FRONTEND_URL || "*",
+    origin: function (origin, callback) {
+      // If no origin (like from Postman), or origin is allowed, accept it
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     methods: ["GET", "POST"]
   },
-  pingTimeout: 20000,    // default is 5000ms , if no heartbeat/ping response from client within 20 seconds, connection is closed.
-  pingInterval: 25000    // default is 25000ms, how often the server pings the client to check if it's still alive 
-})
+  pingTimeout: 20000,
+  pingInterval: 25000
+});
 
 
 //  JWT AUTH MIDDLEWARE FOR SOCKET.IO ,  ensures every socket is authenticated before proceeding.
