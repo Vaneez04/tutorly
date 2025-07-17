@@ -122,7 +122,7 @@ const updateProfile = async (req, res) => {
 const bookAppointment = async (req, res) => {
 
     try {
-
+//userid from middlewares auth.js
         const { userId, tutid, slotDate, slotTime } = req.body
         const tData = await tutorModel.findById(tutid).select("-password") 
          //Uses tutorModel to fetch the tutor document by its ID (tutid) from the database.

@@ -34,7 +34,9 @@ const AppContextProvider=(props)=>{
     }
     useEffect(() => {
         getTutorsData()
-    }, [])
+    }, [])   //"Run getTutorsData() once when the component mounts, fn apne aap run nhi hoga isliye use effect 
+    // [] = Run the effect only once on component mount. bas ek baar jab component render ho tab run kardo
+// The empty dependency array ensures it runs only once, avoiding unnecessary repeated API calls during re-renders.
 
       // Getting User Profile using API
       const loadUserProfileData = async () => {

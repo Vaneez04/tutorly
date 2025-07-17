@@ -9,7 +9,7 @@ const TutorContextProvider = (props) => {
     const [tToken, setTToken] = useState(localStorage.getItem('tToken') ? localStorage.getItem('tToken') : '')
     const [appointments, setAppointments] = useState([])
     const [dashData, setDashData] = useState(false)
-
+  const [profileData, setProfileData] = useState(false)
  // Getting Tutor appointment data from Database using API
  const getAppointments = async () => {
     try {
@@ -71,6 +71,19 @@ const cancelAppointment = async (appointmentId) => {
     }
 }
 
+  // Getting Tutor profile data from Database using API
+    const getProfileData = async () => {
+        try {
+
+            const { data } = await axios.get(backendUrl + '/api/tutor/profile', { headers: { tToken } })
+            console.log(data.profileData)
+            setProfileData(data.profileData)
+
+        } catch (error) {
+            console.log(error)
+            toast.error(error.message)
+        }
+    }
 
     // Getting Tutor dashboard data using API
     const getDashData = async () => {
@@ -95,7 +108,8 @@ const cancelAppointment = async (appointmentId) => {
         tToken,setTToken,
         appointments, getAppointments,setAppointments,
         completeAppointment,cancelAppointment,
-        dashData,getDashData,setDashData
+        dashData,getDashData,setDashData,
+        profileData,getProfileData,setProfileData
     }
     return (
         <TutorContext.Provider value={value}>

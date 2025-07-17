@@ -54,8 +54,8 @@ const Myappointments = () => {
       currency: order.currency,
       name: 'Appointment Payment',
       description: "Appointment Payment",
-      order_id: order.id,
-      receipt: order.receipt,
+      order_id: order.id,  // RAZORPAY order ID
+      receipt: order.receipt,  //apointment ID
       handler: async (response) => {
         try {
           const { data } = await axios.post(backendUrl + "/api/user/verify-Razorpay", response, { headers: { token } });
@@ -76,6 +76,7 @@ const Myappointments = () => {
   const appointmentRazorpay = async (appointmentId) => {
     try {
       const { data } = await axios.post(backendUrl + '/api/user/payment-razorpay', { appointmentId }, { headers: { token } })
+      // is request se bad order milta hai
       if (data.success) {
         initPay(data.order)
       }
@@ -166,24 +167,17 @@ const Myappointments = () => {
         </div>
 
         {/* ChatRoom */}
-        {!item.cancelled && item.payment && !item.isCompleted && (
-          <div>
-            {/* <ChatRoom
-              roomId={item._id}
-              senderId={item.userId}
-              senderRole="User"
-              collapsible={true}
-            /> */}
-            <button
-  onClick={() =>
-    navigate(`/chat/${item._id}?senderId=${item.userId}&senderRole=User`)
-  }
-  className="px-4 py-2 bg-blue-600 text-white rounded"
->
-  ASK IN CHAT
-</button>
-          </div>
-        )}
+       {!item.cancelled && item.payment && !item.isCompleted && (
+  <div>
+    <button
+      onClick={() => navigate(`/chat/${item._id}`)}
+      className="px-4 py-2 bg-blue-600 text-white rounded"
+    >
+      ASK IN CHAT
+    </button>
+  </div>
+)}
+
 
         {/* Start Call */}
     {item.payment && !item.isCompleted && !item.cancelled && (

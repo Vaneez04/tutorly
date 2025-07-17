@@ -155,7 +155,7 @@ const tutorDashboard = async (req, res) => {
             earnings,
             appointments: appointments.length,
             users: users.length,
-            latestAppointments: appointments.reverse().slice(0, 5)
+            latestAppointments: appointments.reverse().slice(0, 10)
         }
 
         res.json({ success: true, dashData })
@@ -165,6 +165,23 @@ const tutorDashboard = async (req, res) => {
         res.json({ success: false, message: error.message })
     }
 }
+
+// API to get tutor profile data
+
+const tutorProfile = async (req, res) => {
+    try {
+
+        const { tutid } = req.body
+        const profileData = await tutorModel.findById(tutid).select('-password')
+
+        res.json({ success: true, profileData })
+
+    } catch (error) {
+        console.log(error)
+        res.json({ success: false, message: error.message })
+    }
+}
+
 export{
-    tutorList,loginTutor,appointmentsOfTutor,appointmentComplete,appointmentCancel,tutorDashboard
+    tutorList,loginTutor,appointmentsOfTutor,appointmentComplete,appointmentCancel,tutorDashboard,tutorProfile
 }

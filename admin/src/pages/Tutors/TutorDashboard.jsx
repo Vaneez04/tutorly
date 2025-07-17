@@ -3,15 +3,15 @@ import { TutorContext } from '../../context/TutorContext'
 import { assets } from '../../assets/assets'
 import { AppContext } from '../../context/AppContext'
 import ChatRoom from '../../components/ChatRoom'
-import VideoCall from '../../components/VideoCall' //  Import VideoCall
+import VideoCall from '../../components/VideoCall'
 import { useNavigate } from 'react-router-dom'
+
 const TutorDashboard = () => {
-   const navigate = useNavigate()
+  const navigate = useNavigate()
   const { tToken, dashData, getDashData, cancelAppointment, completeAppointment } = useContext(TutorContext)
   const { slotDateFormat, currencySymbol } = useContext(AppContext)
 
-  // const [showCallFor, setShowCallFor] = useState(null) //  Track which appointment is showing video call
-const [showCallId, setShowCallId] = useState(null)
+  const [showCallId, setShowCallId] = useState(null)
 
   useEffect(() => {
     if (tToken) {
@@ -77,37 +77,30 @@ const [showCallId, setShowCallId] = useState(null)
 
               {/* ChatRoom rendered only for active & paid appointments */}
               {!item.cancelled && item.payment && !item.isCompleted && (
-                <>
-                  
-                  <button
-  onClick={() =>
-    navigate(`/chat/${item._id}?senderId=${item.tutid}&senderRole=Tutor`)
-  }
-  className="px-4 py-2 bg-blue-600 text-white rounded"
->
- RESPOND IN CHAT
-</button>
+                <button
+                  onClick={() => navigate(`/chat/${item._id}`)}
+                  className="px-4 py-2 bg-blue-600 text-white rounded"
+                >
+                  RESPOND IN CHAT
+                </button>
+              )}
 
-                  {/*  Video Call button */}
-            {item.payment && !item.isCompleted && !item.cancelled && (
-  <button
-    className="mt-2 bg-green-600 text-white px-4 py-2 rounded"
-    onClick={() => setShowCallId(item._id)}
-  >
-    Join Call
-  </button>
-)}
+              {/* Video Call button */}
+              {item.payment && !item.isCompleted && !item.cancelled && (
+                <button
+                  className="mt-2 bg-green-600 text-white px-4 py-2 rounded"
+                  onClick={() => setShowCallId(item._id)}
+                >
+                  Join Call
+                </button>
+              )}
 
-{showCallId === item._id && (
-  <VideoCall
-    roomId={item._id}
-    onClose={() => setShowCallId(null)}
-    isInitiator={false} // ✅ Tutor only joins
-  />
-)}
-
-
-                </>
+              {showCallId === item._id && (
+                <VideoCall
+                  roomId={item._id}
+                  onClose={() => setShowCallId(null)}
+                  isInitiator={false}
+                />
               )}
             </div>
           ))}

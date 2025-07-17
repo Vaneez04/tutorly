@@ -9,12 +9,12 @@ import userRouter from "./routes/userRoute.js"
 import http from "http"
 import { Server } from "socket.io"
 import MessageModel from "./models/messageModel.js"
-
 import chatRouter from "./routes/chatRoute.js"
+import jwt from "jsonwebtoken"     
 
 // app config
-const app=express()
-const port=process.env.PORT || 4000
+const app = express()
+const port = process.env.PORT || 4000
 connectDB()
 connectCloudinary()
 
@@ -23,27 +23,45 @@ app.use(express.json())
 app.use(cors())
 
 // api endpoints
-app.use('/api/admin',adminRouter)
-app.use('/api/tutor',tutorRouter)
-app.use('/api/user',userRouter)
-app.use('/api/chat',chatRouter)
+app.use('/api/admin', adminRouter)
+app.use('/api/tutor', tutorRouter)
+app.use('/api/user', userRouter)
+app.use('/api/chat', chatRouter)
 
-app.get('/',(req,res)=>{
-    res.send("api fetching")
+app.get('/', (req, res) => {
+  res.send("api fetching")
 })
 
 // Setup HTTP Server + Socket.IO
 const server = http.createServer(app)
-
+//This is needed because Socket.IO needs access to the raw HTTP server to upgrade HTTP to WebSocket under the hood.
 const io = new Server(server, {
   cors: {
     origin: process.env.FRONTEND_URL || "*",
     methods: ["GET", "POST"]
+  },
+  pingTimeout: 20000,    // default is 5000ms , if no heartbeat/ping response from client within 20 seconds, connection is closed.
+  pingInterval: 25000    // default is 25000ms, how often the server pings the client to check if it's still alive 
+})
+
+
+//  JWT AUTH MIDDLEWARE FOR SOCKET.IO ,  ensures every socket is authenticated before proceeding.
+io.use((socket, next) => {
+  const token = socket.handshake.auth?.token
+  if (!token) return next(new Error("No token"))
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET)
+    socket.userId = decoded.id
+    socket.userRole = decoded.role || 'User'  // optional
+    next()
+  } catch (err) {
+    next(new Error("Invalid token"))
   }
 })
 
-io.on('connection', (socket) => {
-  console.log(' New socket connected:', socket.id)
+io.on('connection', (socket) => {  //fired after the above middleware succeeds. You now have a valid socket with:socket.id: a unique connection ID socket.userId: pulled from JWT
+  console.log(` New socket connected: ${socket.id}, UserID: ${socket.userId}`)
 
   // Join a specific room (appointment ID)
   socket.on('joinRoom', (roomId) => {
@@ -51,59 +69,56 @@ io.on('connection', (socket) => {
     console.log(` Socket ${socket.id} joined room: ${roomId}`)
   })
 
-  // Handle incoming messages
-socket.on('sendMessage', async ({ roomId, message, senderId, image }) => {
-  try {
-    const savedMsg = await MessageModel.create({
-      appointmentId: roomId,
-      senderId,
-      message: message || "",   // default to empty string if not provided
-      image: image || "",       // ✅ handle optional image
-      timestamp: new Date()
-    })
+  //  Handle incoming messages — no senderId from client now, server receiving messages from client(user/tutor)
+  socket.on('sendMessage', async ({ roomId, message, image }) => {
+    try {
+      const savedMsg = await MessageModel.create({
+        appointmentId: roomId,
+        senderId: socket.userId,             //  from JWT
+        senderRole: socket.userRole || "",   // optional
+        message: message || "",
+        image: image || "",
+        timestamp: new Date()
+      })
 
-    // Broadcast the full saved message
-    console.log("sending msg to client:", {
-  message: savedMsg.message,
-  image: savedMsg.image,
-  senderId: savedMsg.senderId
-})
-    io.to(roomId).emit('receiveMessage', {
-  _id: savedMsg._id,
-  message: savedMsg.message,
-  image: savedMsg.image,
-  senderId: savedMsg.senderId,
-  appointmentId: savedMsg.appointmentId,
-  timestamp: savedMsg.timestamp
-})
-  } catch (err) {
-    console.error("Error saving message:", err.message)
-  }
-})
+      console.log(" Message saved & emitting:", savedMsg)
+      
+// After saving the message, it is broadcasted to all clients in the same roomId (including sender).
+      io.to(roomId).emit('receiveMessage', {
+        _id: savedMsg._id,
+        message: savedMsg.message,
+        image: savedMsg.image,
+        senderId: savedMsg.senderId,
+        appointmentId: savedMsg.appointmentId,
+        timestamp: savedMsg.timestamp
+      })
+    } catch (err) {
+      console.error(" Error saving message:", err.message)
+    }
+  })
 
 
- //  WebRTC: Video Call Signaling
+  // WebRTC: Video Call Signaling
   socket.on('joinCallRoom', (roomId) => {
-    socket.join(roomId);
-    console.log(` Socket ${socket.id} joined video call room: ${roomId}`);
-  });
+    socket.join(roomId)
+    console.log(`📹 Socket ${socket.id} joined video call room: ${roomId}`)
+  })
 
   socket.on('offer', (payload) => {
-    socket.to(payload.roomId).emit('offer', payload);
-  });
+    socket.to(payload.roomId).emit('offer', payload)
+  })
 
   socket.on('answer', (payload) => {
-    socket.to(payload.roomId).emit('answer', payload);
-  });
+    socket.to(payload.roomId).emit('answer', payload)
+  })
 
   socket.on('ice-candidate', (payload) => {
-    socket.to(payload.roomId).emit('ice-candidate', payload);
-  });
+    socket.to(payload.roomId).emit('ice-candidate', payload)
+  })
 
-
- 
   socket.on('disconnect', () => {
-    console.log(' Socket disconnected:', socket.id)
+    console.log(` Socket disconnected: ${socket.id}`)
   })
 })
-server.listen(port,()=> console.log(`server started at PORT ${port}`))
+
+server.listen(port, () => console.log(` Server started at PORT ${port}`))

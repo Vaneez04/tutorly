@@ -1,21 +1,37 @@
-import React, { useEffect, useState, useRef } from 'react'
-import io from 'socket.io-client'
+import React, { useEffect, useState, useRef, useContext } from 'react'
 import axios from 'axios'
+import { AppContext } from '../context/AppContext'
+import { io } from 'socket.io-client'
 
-const backendUrl = import.meta.env.VITE_BACKEND_URL
-const socket = io(backendUrl)
+const ChatRoom = ({ roomId, senderId, collapsible = false }) => {
+  const { backendUrl, token } = useContext(AppContext)
 
-const ChatRoom = ({ roomId, senderId, senderRole = "User", collapsible = false }) => {
   const [messages, setMessages] = useState([])
   const [newMessage, setNewMessage] = useState("")
   const [showChat, setShowChat] = useState(!collapsible)
   const [imageFile, setImageFile] = useState(null)
   const chatEndRef = useRef(null)
 
+  const socketRef = useRef(null) // hold socket instance
+
   useEffect(() => {
+    //  Initialize socket with JWT token
+    const socket = io(backendUrl, {
+      auth: { token }
+    })
+    socketRef.current = socket
+
+    //  Join the room
+    socket.emit("joinRoom", roomId)
+
+    //  Fetch old messages
     const fetchMessages = async () => {
       try {
-        const { data } = await axios.post(`${backendUrl}/api/chat/messages`, { appointmentId: roomId })
+        const { data } = await axios.post(`${backendUrl}/api/chat/messages`, {
+          appointmentId: roomId
+        }, {
+          headers: { token }
+        })
         if (data.success) setMessages(data.messages)
       } catch (err) {
         console.error("Error fetching messages:", err)
@@ -23,14 +39,16 @@ const ChatRoom = ({ roomId, senderId, senderRole = "User", collapsible = false }
     }
 
     fetchMessages()
-    socket.emit("joinRoom", roomId)
 
+    //  Listen for new incoming messages
     socket.on("receiveMessage", (msg) => {
       setMessages((prev) => [...prev, msg])
     })
 
-    return () => socket.off("receiveMessage")
-  }, [roomId])
+    return () => {
+      socket.disconnect()
+    }
+  }, [roomId, token, backendUrl])
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -43,7 +61,7 @@ const ChatRoom = ({ roomId, senderId, senderRole = "User", collapsible = false }
     }
   }
 
-    const sendMessage = async () => {
+  const sendMessage = async () => {
     if (!newMessage.trim() && !imageFile) return
 
     let imageUrl = ""
@@ -54,7 +72,10 @@ const ChatRoom = ({ roomId, senderId, senderRole = "User", collapsible = false }
 
       try {
         const { data } = await axios.post(`${backendUrl}/api/chat/upload`, formData, {
-          headers: { "Content-Type": "multipart/form-data" },
+          headers: {
+            "Content-Type": "multipart/form-data",
+            token
+          }
         })
         if (data.success) imageUrl = data.url
       } catch (err) {
@@ -63,17 +84,16 @@ const ChatRoom = ({ roomId, senderId, senderRole = "User", collapsible = false }
       }
     }
 
-    socket.emit("sendMessage", {
+    //  Send message WITHOUT senderId
+    socketRef.current.emit("sendMessage", {
       roomId,
       message: newMessage,
-      senderId,
       image: imageUrl
     })
 
     setNewMessage("")
     setImageFile(null)
   }
-
 
   return (
     <div className="text-sm">
@@ -86,17 +106,22 @@ const ChatRoom = ({ roomId, senderId, senderRole = "User", collapsible = false }
         </button>
       )}
 
-       {showChat && (
+      {showChat && (
         <div className="max-w-md border rounded shadow p-4 bg-white space-y-2">
           <div className="h-60 overflow-y-auto flex flex-col border-b pb-2">
-            {messages.length === 0 && <p className="text-gray-400 text-center mt-6">No messages yet</p>}
+            {messages.length === 0 && (
+              <p className="text-gray-400 text-center mt-6">No messages yet</p>
+            )}
             {messages.map((msg, idx) => (
               <div
                 key={idx}
                 className={`my-1 flex ${msg.senderId === senderId ? 'justify-end' : 'justify-start'}`}
               >
-                {console.log("msg received in chatroom:", msg)}
-                <div className={`px-3 py-2 rounded-lg max-w-[75%] text-sm ${msg.senderId === senderId ? 'bg-blue-600 text-white' : 'bg-gray-200 text-black'}`}>
+                <div className={`px-3 py-2 rounded-lg max-w-[75%] text-sm ${
+                  msg.senderId === senderId
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-200 text-black'
+                }`}>
                   {msg.image && (
                     <img
                       src={msg.image}

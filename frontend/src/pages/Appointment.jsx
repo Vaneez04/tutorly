@@ -16,6 +16,8 @@ const Appointment = () => {
   const [slotTime, setSlotTime] = useState('')
   const daysOfWeek = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']
 
+const [isBooking, setIsBooking] = useState(false)  //  to book only once even on multiple clicks
+
   const fetchtutInfo = async () => {
     const tutInfo = tutors.find((t) => t._id === tutid)  //, tutInfo is not an array but rather an object representing the matching tutor.Finds the tutor object from the tutors array based on the tutid.
     // Updates the tutInfo state with the selected tutor's details.
@@ -96,10 +98,12 @@ const Appointment = () => {
   //  BOOK APPOINTMENT FN
 
   const bookAppointment = async () => {
-
+ if (isBooking) return; // prevent duplicate calls
+  setIsBooking(true);    // lock further requests
     if (!token) {
       toast.warning('Login to book appointment')
       return navigate('/login')
+       setIsBooking(false);  
     }
 
     const date = tutSlots[slotIndex][0].datetime
@@ -113,19 +117,21 @@ const Appointment = () => {
     try {
 
       const { data } = await axios.post(backendUrl + '/api/user/book-appointment', { tutid, slotDate, slotTime }, { headers: { token } })
-      if (data.success) {
-        toast.success(data.message)
-        getTutorsData()
-        navigate('/appointments')
-      } else {
-        toast.error(data.message)
-      }
-
-    } catch (error) {
-      console.log(error)
-      toast.error(error.message)
+        if (data.success) {
+      toast.success(data.message);
+      getTutorsData();
+      navigate('/appointments');
+    } else {
+      toast.error(data.message);
     }
-
+  }
+   catch (error) {
+    console.log(error);
+    toast.error(error.message);
+  } 
+  finally {
+    setIsBooking(false);  // unlock button after response
+  }
   }
   useEffect(() => {
     if (tutors.length > 0) {
@@ -241,9 +247,14 @@ const Appointment = () => {
         </div>
 
         {/* Button */}
-        <button onClick={bookAppointment} className="w-full sm:w-auto bg-blue-400 text-black text-sm font-semibold px-6 py-3 rounded-lg mt-6 hover:bg-blue-500 transition duration-300">
-          Book an Appointment
-        </button>
+       <button
+  onClick={bookAppointment}
+  disabled={isBooking}
+  className={`w-full sm:w-auto text-sm font-semibold px-6 py-3 rounded-lg mt-6 transition duration-300
+    ${isBooking ? "bg-gray-400 cursor-not-allowed" : "bg-blue-400 hover:bg-blue-500 text-black"}`}
+>
+  {isBooking ? "Booking..." : "Book an Appointment"}
+</button>
       </div>
     </div>
   ) : null;
